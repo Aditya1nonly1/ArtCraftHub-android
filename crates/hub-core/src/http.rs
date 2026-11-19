@@ -28,7 +28,7 @@ pub fn classify(status: u16, remaining: Option<&str>, reset: Option<&str>) -> Op
             Some(HubError::RateLimited { reset_at: reset.and_then(|r| r.trim().parse().ok()).unwrap_or(0) })
         }
         404 => Some(HubError::NotFound),
-        code => Some(HubError::Io { message: format!("HTTP {code}") }),
+        code => Some(HubError::Io { detail: format!("HTTP {code}") }),
     }
 }
 
@@ -39,7 +39,7 @@ fn header<'a>(res: &'a ureq::http::Response<ureq::Body>, name: &str) -> Option<&
 /// Sends a GET and turns a non-success status into a `HubError`.
 fn send(req: ureq::RequestBuilder<ureq::typestate::WithoutBody>) -> Result<ureq::http::Response<ureq::Body>, HubError> {
     let res = req.call().map_err(|e| match e {
-        ureq::Error::Io(io) => HubError::Io { message: io.to_string() },
+        ureq::Error::Io(io) => HubError::Io { detail: io.to_string() },
         _ => HubError::Offline,
     })?;
     match classify(res.status().as_u16(), header(&res, "x-ratelimit-remaining"), header(&res, "x-ratelimit-reset")) {
@@ -85,7 +85,7 @@ impl Http for UreqHttp {
             return Ok(HttpResponse::NotModified);
         }
         let etag = header(&res, "etag").map(str::to_owned);
-        let body = res.body_mut().read_to_string().map_err(|e| HubError::Io { message: e.to_string() })?;
+        let body = res.body_mut().read_to_string().map_err(|e| HubError::Io { detail: e.to_string() })?;
         Ok(HttpResponse::Ok { body, etag })
     }
 
@@ -123,6 +123,6 @@ mod tests {
     }
     #[test]
     fn server_error_is_io() {
-        assert!(matches!(classify(502, None, None), Some(HubError::Io { message }) if message == "HTTP 502"));
+        assert!(matches!(classify(502, None, None), Some(HubError::Io { detail }) if detail == "HTTP 502"));
     }
 }

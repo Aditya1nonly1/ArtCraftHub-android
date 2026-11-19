@@ -17,20 +17,20 @@ pub enum HubError {
     ChecksumMismatch,
     #[error("cancelled")]
     Cancelled,
-    #[error("I/O error: {message}")]
-    Io { message: String },
-    #[error("parse error: {message}")]
-    Parse { message: String },
+    #[error("I/O error: {detail}")]
+    Io { detail: String },
+    #[error("parse error: {detail}")]
+    Parse { detail: String },
 }
 
 impl From<std::io::Error> for HubError {
     fn from(e: std::io::Error) -> Self {
-        Self::Io { message: e.to_string() }
+        Self::Io { detail: e.to_string() }
     }
 }
 
 impl From<serde_json::Error> for HubError {
     fn from(e: serde_json::Error) -> Self {
-        Self::Parse { message: e.to_string() }
+        Self::Parse { detail: e.to_string() }
     }
 }

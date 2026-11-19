@@ -89,7 +89,7 @@ impl GithubClient {
                 // We sent no ETag, so a 304 is unexpected; ask again plainly.
                 None => match self.http.get(url, None)? {
                     HttpResponse::Ok { body, .. } => Ok(body),
-                    HttpResponse::NotModified => Err(HubError::Io { message: "unexpected 304".to_owned() }),
+                    HttpResponse::NotModified => Err(HubError::Io { detail: "unexpected 304".to_owned() }),
                 },
             },
             HttpResponse::Ok { body, etag } => {
