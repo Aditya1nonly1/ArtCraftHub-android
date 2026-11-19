@@ -142,7 +142,6 @@ pub(crate) mod tests {
         pub fn ok(&self, url: &str, body: &str, etag: Option<&str>) {
             self.push(url, Ok(HttpResponse::Ok { body: body.to_owned(), etag: etag.map(str::to_owned) }));
         }
-        #[allow(dead_code, reason = "used by the download tests")]
         pub fn file(&self, url: &str, bytes: &[u8]) {
             self.files.lock().unwrap().insert(url.to_owned(), bytes.to_vec());
         }
