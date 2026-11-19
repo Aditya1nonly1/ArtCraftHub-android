@@ -3,6 +3,7 @@
 uniffi::setup_scaffolding!();
 
 pub mod error;
+pub mod sources;
 pub mod version;
 
 pub use error::HubError;
