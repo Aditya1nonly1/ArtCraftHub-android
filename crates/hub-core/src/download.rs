@@ -109,9 +109,10 @@ fn fetch_to(
 /// The hash `SHA256SUMS.txt` lists for this APK, if the release has one that mentions it.
 fn expected_hash(http: &dyn Http, apk: &ApkInfo) -> Result<Option<String>, HubError> {
     let Some(url) = &apk.sums_url else { return Ok(None) };
-    match http.get(url, None)? {
-        HttpResponse::Ok { body, .. } => Ok(parse_sha256sums(&body).remove(&apk.file_name)),
-        HttpResponse::NotModified => Ok(None),
+    match http.get(url, None) {
+        Ok(HttpResponse::Ok { body, .. }) => Ok(parse_sha256sums(&body).remove(&apk.file_name)),
+        Ok(HttpResponse::NotModified) | Err(HubError::NotFound) => Ok(None),
+        Err(e) => Err(e),
     }
 }
 
@@ -190,6 +191,13 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let http = http_with(Some(&format!("{HELLO_SHA}  other.apk\n")));
         let got = download_apk(&http, &apk(true), dir.path(), &Recorder::default(), &AtomicBool::new(false)).unwrap();
+        assert!(!got.verified);
+    }
+    #[test]
+    fn missing_sums_file_is_unverified() {
+        let dir = tempfile::tempdir().unwrap();
+        let got = download_apk(&http_with(None), &apk(true), dir.path(), &Recorder::default(), &AtomicBool::new(false))
+            .unwrap();
         assert!(!got.verified);
     }
     #[test]
