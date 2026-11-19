@@ -2,55 +2,96 @@ package io.github.l41n_pr0t0.artcrafthub
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import io.github.l41n_pr0t0.artcrafthub.core.AppEntry
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.l41n_pr0t0.artcrafthub.core.RustCore
+import io.github.l41n_pr0t0.artcrafthub.core.isNewer
+import io.github.l41n_pr0t0.artcrafthub.system.AndroidPackageGateway
+import io.github.l41n_pr0t0.artcrafthub.ui.CatalogScreen
+import io.github.l41n_pr0t0.artcrafthub.ui.DetailScreen
+import io.github.l41n_pr0t0.artcrafthub.ui.HubViewModel
+import io.github.l41n_pr0t0.artcrafthub.ui.IconLoader
+import io.github.l41n_pr0t0.artcrafthub.ui.PrefsPackageNames
+import io.github.l41n_pr0t0.artcrafthub.ui.theme.HubTheme
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
-/** Temporary screen: lists the catalogue to prove the Rust core works on a device. */
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val core = RustCore(applicationContext)
-        setContent {
-            var apps by remember { mutableStateOf<List<AppEntry>>(emptyList()) }
-            var status by remember { mutableStateOf("Loading…") }
-            LaunchedEffect(Unit) {
-                apps = withContext(Dispatchers.IO) { core.cachedCatalog() }
-                status = try {
-                    apps = withContext(Dispatchers.IO) { core.refreshCatalog() }
-                    "${apps.size} apps"
-                } catch (e: Exception) {
-                    "Refresh failed: $e"
-                }
+    private val core by lazy { RustCore(applicationContext) }
+    private val packages by lazy { AndroidPackageGateway(applicationContext) }
+
+    private val model: HubViewModel by viewModels {
+        viewModelFactory {
+            initializer {
+                HubViewModel(core, packages, Dispatchers.IO, ::isNewer, PrefsPackageNames(applicationContext))
             }
-            MaterialTheme {
-                Surface(Modifier.fillMaxSize()) {
-                    LazyColumn(Modifier.safeDrawingPadding().padding(16.dp)) {
-                        item { Text(status, style = MaterialTheme.typography.titleMedium) }
-                        items(apps, key = { it.id }) { app ->
-                            Column(Modifier.padding(vertical = 8.dp)) {
-                                Text(app.name, style = MaterialTheme.typography.titleLarge)
-                                Text("${app.latestVersion} · ${app.apk?.fileName ?: "no APK for this phone"}")
-                            }
-                        }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        val icons = IconLoader(core, packages, Dispatchers.IO)
+        setContent {
+            HubTheme {
+                val state by model.state.collectAsStateWithLifecycle()
+                val snackbar = remember { SnackbarHostState() }
+                LaunchedEffect(state.message) {
+                    state.message?.let {
+                        snackbar.showSnackbar(it)
+                        model.dismissMessage()
+                    }
+                }
+                val selected = state.apps.firstOrNull { it.entry.id == state.selectedId }
+                BackHandler(enabled = selected != null) { model.select(null) }
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = { Text(selected?.entry?.name ?: getString(R.string.app_name)) },
+                            navigationIcon = {
+                                if (selected != null) TextButton(onClick = { model.select(null) }) { Text("Back") }
+                            },
+                        )
+                    },
+                    snackbarHost = { SnackbarHost(snackbar) },
+                ) { padding ->
+                    if (selected != null) {
+                        DetailScreen(
+                            app = selected,
+                            packageName = model.packageName(selected.entry),
+                            icons = icons,
+                            onPrimary = model::primaryAction,
+                            onCancel = model::cancel,
+                            onUninstall = model::uninstall,
+                            extraActions = {},
+                            contentPadding = padding,
+                        )
+                    } else {
+                        CatalogScreen(
+                            state = state,
+                            packageName = { model.packageName(it.entry) },
+                            icons = icons,
+                            onRefresh = model::refresh,
+                            onSelect = model::select,
+                            onPrimary = model::primaryAction,
+                            onCancel = model::cancel,
+                            contentPadding = padding,
+                        )
                     }
                 }
             }
