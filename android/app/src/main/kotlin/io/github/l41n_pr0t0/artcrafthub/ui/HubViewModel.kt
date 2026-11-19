@@ -170,23 +170,40 @@ class HubViewModel(
         packages.uninstall(packageName(entry))
     }
 
-    fun addSource(link: String) = editSources { core.addSource(link) }
+    /** Adds a source; [onAdded] runs only if the link was accepted (so the screen can clear its field). */
+    fun addSource(link: String, onAdded: () -> Unit = {}) = editSources(onAdded) { core.addSource(link) }
 
     fun removeSource(id: String) = editSources { core.removeSource(id) }
 
     fun resetSources() = editSources { core.resetSources() }
 
-    fun importObtainium(json: String) = editSources { core.importObtainium(json) }
+    fun importObtainium(json: String) = editSources {
+        when (val added = core.importObtainium(json).size) {
+            0 -> "No ArtCraft apps found in that file."
+            1 -> "Added 1 source from Obtainium."
+            else -> "Added $added sources from Obtainium."
+        }
+    }
 
-    /** Runs a source change on [io], then reloads the source list and the catalogue. */
-    private fun editSources(change: () -> Unit) {
+    /** Clears downloaded files and cached GitHub answers, then checks GitHub again. */
+    fun clearCache() {
+        viewModelScope.launch {
+            withContext(io) { core.clearCache() }
+            refresh()
+        }
+    }
+
+    /**
+     * Runs a source change on [io], then reloads the source list and the catalogue. [change] may
+     * return a message to show.
+     */
+    private fun editSources(onDone: () -> Unit = {}, change: () -> Any?) {
         viewModelScope.launch {
             try {
-                val sources = withContext(io) {
-                    change()
-                    core.sources()
-                }
+                val (result, sources) = withContext(io) { change() to core.sources() }
                 _state.update { it.copy(sources = sources) }
+                onDone()
+                if (result is String) showMessage(result)
                 refresh()
             } catch (e: CancellationException) {
                 throw e
@@ -196,7 +213,7 @@ class HubViewModel(
         }
     }
 
-    private fun showMessage(text: String) = _state.update { it.copy(message = text) }
+    fun showMessage(text: String) = _state.update { it.copy(message = text) }
 
     private fun setBusy(id: String, state: AppState?) {
         if (state == null) busy.remove(id) else busy[id] = state

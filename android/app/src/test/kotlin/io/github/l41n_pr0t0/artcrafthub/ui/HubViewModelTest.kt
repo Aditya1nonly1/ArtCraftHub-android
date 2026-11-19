@@ -116,9 +116,59 @@ class HubViewModelTest {
         val vm = vm()
         advanceUntilIdle()
         val before = vm.state.value.sources
-        vm.addSource("https://github.com/someone/else")
+        var added = false
+        vm.addSource("https://github.com/someone/else") { added = true }
         advanceUntilIdle()
+        assertEquals(false, added)
         assertEquals(before, vm.state.value.sources)
         assertEquals("Only links from github.com/artcraft-android can be added.", vm.state.value.message)
+    }
+
+    @Test fun acceptedSourceReportsSuccess() = runTest(dispatcher) {
+        val vm = vm()
+        advanceUntilIdle()
+        var added = false
+        vm.addSource("https://github.com/artcraft-android/capcraft") { added = true }
+        advanceUntilIdle()
+        assertEquals(true, added)
+    }
+
+    @Test fun importObtainiumAddsSourcesAndRefreshes() = runTest(dispatcher) {
+        val vm = vm()
+        advanceUntilIdle()
+        val refreshesBefore = core.refreshes
+        core.importResult = listOf(repoSource("procraft"), repoSource("capcraft"))
+        vm.importObtainium("{}")
+        advanceUntilIdle()
+        assertEquals(listOf("artcraft-android", "procraft", "capcraft"), vm.state.value.sources.map { it.id })
+        assertEquals(refreshesBefore + 1, core.refreshes)
+        assertEquals("Added 2 sources from Obtainium.", vm.state.value.message)
+    }
+
+    @Test fun importWithNothingNewSaysSo() = runTest(dispatcher) {
+        val vm = vm()
+        advanceUntilIdle()
+        vm.importObtainium("{}")
+        advanceUntilIdle()
+        assertEquals("No ArtCraft apps found in that file.", vm.state.value.message)
+    }
+
+    @Test fun removingARepoSourceDropsItsApp() = runTest(dispatcher) {
+        core.sourceList = listOf(repoSource("capcraft"), repoSource("procraft"))
+        val vm = vm()
+        advanceUntilIdle()
+        assertEquals(listOf("capcraft", "procraft"), vm.state.value.apps.map { it.entry.id })
+        vm.removeSource("procraft")
+        advanceUntilIdle()
+        assertEquals(listOf("capcraft"), vm.state.value.apps.map { it.entry.id })
+    }
+
+    @Test fun removingARepoStillCoveredByTheOrgKeepsItsApp() = runTest(dispatcher) {
+        core.sourceList = core.sourceList + repoSource("procraft")
+        val vm = vm()
+        advanceUntilIdle()
+        vm.removeSource("procraft")
+        advanceUntilIdle()
+        assertEquals(listOf("capcraft", "procraft"), vm.state.value.apps.map { it.entry.id })
     }
 }

@@ -10,6 +10,7 @@ import io.github.l41n_pr0t0.artcrafthub.system.InstallResult
 import io.github.l41n_pr0t0.artcrafthub.system.PackageGateway
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+fun repoSource(id: String) = Source(id, id, "https://github.com/artcraft-android/$id")
 
 fun entry(id: String, version: String = "v0.0.7-beta", apk: Boolean = true) = AppEntry(
     id = id,
@@ -39,15 +40,25 @@ class FakeCore(
     override fun sources() = sourceList
     override fun addSource(link: String): Source {
         addSourceError?.let { throw it }
-        return Source(link, link, link).also { sourceList = sourceList + it }
+        val repo = link.substringAfterLast('/')
+        return Source(repo, repo, link).also { sourceList = sourceList + it }
     }
     override fun removeSource(id: String) { sourceList = sourceList.filterNot { it.id == id } }
     override fun resetSources() = sourceList
-    override fun importObtainium(json: String) = sourceList
+    override fun importObtainium(json: String): List<Source> {
+        sourceList = sourceList + importResult
+        return importResult
+    }
     override fun cachedCatalog() = cached
+    var importResult: List<Source> = emptyList()
+    var refreshes = 0
+
+    /** Like the real core: the org source covers every app, a repo source only its own. */
     override fun refreshCatalog(): List<AppEntry> {
         refreshError?.let { throw it }
-        return fresh
+        refreshes++
+        if (sourceList.any { it.repo == null }) return fresh
+        return fresh.filter { app -> sourceList.any { it.repo == app.id } }
     }
     override fun download(appId: String, onProgress: (Long, Long) -> Unit): DownloadedApk {
         downloads += appId
