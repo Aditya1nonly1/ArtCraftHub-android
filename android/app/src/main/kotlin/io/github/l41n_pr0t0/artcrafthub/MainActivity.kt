@@ -58,6 +58,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             HubTheme {
                 val state by model.state.collectAsStateWithLifecycle()
+                val hasApps = state.apps.isNotEmpty()
+                LaunchedEffect(hasApps) { if (hasApps) reportFullyDrawn() }
                 val snackbar = remember { SnackbarHostState() }
                 LaunchedEffect(state.message) {
                     state.message?.let {

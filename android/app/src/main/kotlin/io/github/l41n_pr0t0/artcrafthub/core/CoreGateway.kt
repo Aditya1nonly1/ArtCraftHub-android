@@ -23,11 +23,11 @@ interface CoreGateway {
 
 /** The real core: the Rust `Hub`, keeping its files in the app's private storage. */
 class RustCore(context: Context) : CoreGateway {
-    private val hub = Hub(
-        context.filesDir.absolutePath,
-        context.cacheDir.absolutePath,
-        Build.SUPPORTED_ABIS.toList(),
-    )
+    // Lazy so the native library loads and the files are read on the first (background) call,
+    // not on the main thread while the first frame is being drawn.
+    private val hub by lazy {
+        Hub(context.filesDir.absolutePath, context.cacheDir.absolutePath, Build.SUPPORTED_ABIS.toList())
+    }
 
     override fun sources() = hub.sources()
     override fun addSource(link: String) = hub.addSource(link)
