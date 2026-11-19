@@ -53,7 +53,6 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-      - uses: android-actions/setup-android@v3
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ env.RUST_VERSION }}
@@ -65,7 +64,7 @@ jobs:
       - name: Install cargo-ndk and the Android NDK
         run: |
           cargo install cargo-ndk --version 4.1.2 --locked
-          yes | sdkmanager --install "ndk;$NDK_VERSION" >/dev/null
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$NDK_VERSION" >/dev/null
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$NDK_VERSION" >>"$GITHUB_ENV"
 
       - name: Release key
