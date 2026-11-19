@@ -1,0 +1,206 @@
+[
+ {
+  "tag_name": "v0.0.8-beta",
+  "name": "draft",
+  "body": "## What's New\n\nAdded 394 new stock brushes in 37 sets, each ProCraft's own; the earlier brushes stay, with your changes, in a Legacy set\nAdded new Adjustments, Selection, Transform, Paint, Smudge, Erase and Layers icons in the top bar - PR #178 by lork-fork\nAdded zooming and panning in the Drawing Guide editor - issue #184\nAdded support for Android 8 and 9 tablets - issue #239\nAdded Linux builds for 64-bit ARM - issue #240\nAdded the frame's width and height by your finger while resizing in Crop & Resize - issues #231, #250\nAdded Save to Gallery to the share sheet on Android - issue #232\nAdded Canvas Orientation Memory: the gallery shows an artwork turned as its canvas was left - issue #256\nAdded Rename to a brush's menu, held in the library - issue #253\nAdded pinching two fingers in on a brush library to show every library, and out on one to open it - issue #251\nFixed imported Photoshop brushes drawing plain and smooth: their textures, dual brushes, scattering and jitters now come in - issue #189\nFixed the pen button set to erase while held not erasing on some tablets - issue #193\nFixed pen strokes' width changing abruptly where the taper ends - issue #194\nFixed the Windows app freezing when sharing or importing - issue #197\nFixed the interface looking blurry and washed out on some Android tablets, with a new Wide Color switch in Settings - issues #179, #202, #208\nFixed vector layers with many strokes lagging and crashing - issue #209\nFixed lag on Android, most of all on lower-end tablets and large canvases - issue #222\nFixed Transform doing nothing with a group chosen - issues #224, #252\nFixed the canvas not opening on older graphics chips: everything works there now - issue #229\nFixed imported brushes with their own tips showing no shape under the pen - issue #236\nFixed Liquify's undo taking back the whole session: it now goes a stroke at a time - issue #238\nFixed Automatic selection reusing an old read after a drag was cut short - issue #243\nFixed smudge and wet brushes trailing behind the pen on some devices - issue #249\nFixed pen pressure stopping after switching windows with a Wacom or other WinTab tablet - issue #257\nFixed the perspective guide adding a vanishing point at any touch, and added Delete on a tapped point - issue #254\nFixed Selection, Uncombine and Add Frame problems, and the Gesture controls list not showing that it scrolls - issues #117, #181\nFixed the desktop app's selection and transform bars overlapping in a narrow window - issue #223\n\nAdded text styles for chosen letters - Discord\nAdded the canvas settling onto a straight angle when let go within 5\u00b0 of one - Discord\nAdded the pen's second side button to Gesture controls, and Ctrl+Y as redo - Discord\nAdded sharing a stack or several artworks as one PDF, and Share, Duplicate and Delete on a swiped stack - Discord\nFixed time-lapses saying they can't be read after an update: earlier recordings come back whole - Discord\nFixed the Windows app taking half a minute to start, or crashing, on Intel graphics - Discord\nFixed sharing from the gallery crashing on some graphics drivers - Discord\nFixed pen pressure missing on some WinTab tablets (such as Huion), and Windows Ink's ripples over the canvas - Discord\nFixed smudge and wet brushes refusing to work on large canvases, and touching pixels outside a selection - Discord\nFixed imported brush libraries going missing if the app closed soon after importing - Discord\nFixed Crop & Resize blurring the artwork, and Fit to Canvas losing a turn or flip - Discord\nFixed the selection's bands staying on while transforming, and Color Fill filling at once - Discord\nFixed clipping masks over soft-edged layers showing a pale fringe - Discord\nFixed imported Krita brushes looking unlike they do in Krita - Discord\nFixed glaze, blending, dual and wet-edge brushes building up and blending wrongly - Discord\nFixed keyboard shortcuts going off while typing, and the keyboard showing under the text style sheet on Android - Discord\nFixed dragging a colour from the top bar pulling down the notification shade on Android - Discord\nFixed the desktop app slowing down after a long time-lapse, and pauses while saving very large canvases - Discord\n\nFixed marker and glaze brushes drawing too faintly, and many stock brushes now look nearer their own strokes\nFixed brushes from older brush files drawing with the wrong defaults, tilt, grain depth and finger pressure\nFixed the Smudge tool ignoring a brush's Smudge Pull\nFixed tapered brushes leaving gaps, pressure curves acting before stabilisation, and pens without tilt drawing as if leaning\nFixed the side bar's sliders: a tap on the track jumps there, and dragging out to the side moves it finer\nAdded the modify button (Alt) to the keyboard shortcut lists, and new icons for the Layers + menu\n\n## Hotfixes\n\nFixed the app using far more memory, and lagging or crashing, with big brush libraries - issue #219\nFixed pen drag-scrolling in Brush Studio and Plugins on Windows - issue #196\nFixed the brush cursor not turning with the pen's tilt on Windows - issue #199\nFixed pen pressure dropping out at the start of strokes on Windows - issue #205\nFixed a pen painting while it hovers just above the screen - issue #131\nFixed the app freezing (\"isn't responding\") after drawing for a while on Android - Discord\nFixed slow lines wobbling on Windows, most of all zoomed out - Discord\nFixed the floating colour window covering the panels and the side bar - Discord\nFixed crashes and freezes when switching brush libraries or sets - Discord\nFixed a start-up crash that could repeat after an update on some tablets - Discord\nFixed a two-finger undo right after lifting the pen sometimes doing nothing, and an error during a touch closing the app\nAdded Share log under Actions > Help, so a crash can be sent to us\n\n## Plugins\n\nAdded a Krita brushes plugin, and plugins can now bring brush engines of their own; similar plugins are joined into one with a switch for each, your settings coming along; each off until you turn it on in Prefs > Plugins:\n\n1. Krita brushes: Krita presets and bundles draw with Krita's own engines, MyPaint brushes, SVG tips and thick paint, with a Krita brush studio\n2. Brush engines: a plugin can draw the brushes it imports and give them a studio of their own\n3. Phone layout: keeps the interface clear of the status bar and the camera cutout\n4. Keyboard shortcuts: keys for zooming, fitting, turning and panning the canvas, on Android too, and no longer switching itself off - issue #213\n5. ColorDrop tools: fills by all layers no longer leak past light or coloured lines - issue #212\n6. QuickShape curves: curves keep their sharp turns and S-bends, an anchor dragged takes its controls along, and long curves edit faster - PR #246 by wesleydanieell\n7. Colour triangle: a hue ring around the triangle, and a floating colour window with the picker alone - Discord\n8. Interface: sizes for the floating panels, menus, side bar, top bar and panels each - Discord\n9. Settings with a few named choices open a menu of their choices, not a slider - Discord\n",
+  "prerelease": false,
+  "draft": true,
+  "published_at": "2026-11-17T16:42:57Z",
+  "assets": []
+ },
+ {
+  "tag_name": "v0.0.7-beta",
+  "name": "v0.0.7-beta",
+  "body": "## What's New\n\nAdded 394 new stock brushes in 37 sets, each ProCraft's own; the earlier brushes stay, with your changes, in a Legacy set\nAdded new Adjustments, Selection, Transform, Paint, Smudge, Erase and Layers icons in the top bar - PR #178 by lork-fork\nAdded zooming and panning in the Drawing Guide editor - issue #184\nAdded support for Android 8 and 9 tablets - issue #239\nAdded Linux builds for 64-bit ARM - issue #240\nAdded the frame's width and height by your finger while resizing in Crop & Resize - issues #231, #250\nAdded Save to Gallery to the share sheet on Android - issue #232\nAdded Canvas Orientation Memory: the gallery shows an artwork turned as its canvas was left - issue #256\nAdded Rename to a brush's menu, held in the library - issue #253\nAdded pinching two fingers in on a brush library to show every library, and out on one to open it - issue #251\nFixed imported Photoshop brushes drawing plain and smooth: their textures, dual brushes, scattering and jitters now come in - issue #189\nFixed the pen button set to erase while held not erasing on some tablets - issue #193\nFixed pen strokes' width changing abruptly where the taper ends - issue #194\nFixed the Windows app freezing when sharing or importing - issue #197\nFixed the interface looking blurry and washed out on some Android tablets, with a new Wide Color switch in Settings - issues #179, #202, #208\nFixed vector layers with many strokes lagging and crashing - issue #209\nFixed lag on Android, most of all on lower-end tablets and large canvases - issue #222\nFixed Transform doing nothing with a group chosen - issues #224, #252\nFixed the canvas not opening on older graphics chips: everything works there now - issue #229\nFixed imported brushes with their own tips showing no shape under the pen - issue #236\nFixed Liquify's undo taking back the whole session: it now goes a stroke at a time - issue #238\nFixed Automatic selection reusing an old read after a drag was cut short - issue #243\nFixed smudge and wet brushes trailing behind the pen on some devices - issue #249\nFixed pen pressure stopping after switching windows with a Wacom or other WinTab tablet - issue #257\nFixed the perspective guide adding a vanishing point at any touch, and added Delete on a tapped point - issue #254\nFixed Selection, Uncombine and Add Frame problems, and the Gesture controls list not showing that it scrolls - issues #117, #181\nFixed the desktop app's selection and transform bars overlapping in a narrow window - issue #223\n\nAdded text styles for chosen letters - Discord\nAdded the canvas settling onto a straight angle when let go within 5\u00b0 of one - Discord\nAdded the pen's second side button to Gesture controls, and Ctrl+Y as redo - Discord\nAdded sharing a stack or several artworks as one PDF, and Share, Duplicate and Delete on a swiped stack - Discord\nFixed time-lapses saying they can't be read after an update: earlier recordings come back whole - Discord\nFixed the Windows app taking half a minute to start, or crashing, on Intel graphics - Discord\nFixed sharing from the gallery crashing on some graphics drivers - Discord\nFixed pen pressure missing on some WinTab tablets (such as Huion), and Windows Ink's ripples over the canvas - Discord\nFixed smudge and wet brushes refusing to work on large canvases, and touching pixels outside a selection - Discord\nFixed imported brush libraries going missing if the app closed soon after importing - Discord\nFixed Crop & Resize blurring the artwork, and Fit to Canvas losing a turn or flip - Discord\nFixed the selection's bands staying on while transforming, and Color Fill filling at once - Discord\nFixed clipping masks over soft-edged layers showing a pale fringe - Discord\nFixed imported Krita brushes looking unlike they do in Krita - Discord\nFixed glaze, blending, dual and wet-edge brushes building up and blending wrongly - Discord\nFixed keyboard shortcuts going off while typing, and the keyboard showing under the text style sheet on Android - Discord\nFixed dragging a colour from the top bar pulling down the notification shade on Android - Discord\nFixed the desktop app slowing down after a long time-lapse, and pauses while saving very large canvases - Discord\n\nFixed marker and glaze brushes drawing too faintly, and many stock brushes now look nearer their own strokes\nFixed brushes from older brush files drawing with the wrong defaults, tilt, grain depth and finger pressure\nFixed the Smudge tool ignoring a brush's Smudge Pull\nFixed tapered brushes leaving gaps, pressure curves acting before stabilisation, and pens without tilt drawing as if leaning\nFixed the side bar's sliders: a tap on the track jumps there, and dragging out to the side moves it finer\nAdded the modify button (Alt) to the keyboard shortcut lists, and new icons for the Layers + menu\n\n## Hotfixes\n\nFixed the app using far more memory, and lagging or crashing, with big brush libraries - issue #219\nFixed pen drag-scrolling in Brush Studio and Plugins on Windows - issue #196\nFixed the brush cursor not turning with the pen's tilt on Windows - issue #199\nFixed pen pressure dropping out at the start of strokes on Windows - issue #205\nFixed a pen painting while it hovers just above the screen - issue #131\nFixed the app freezing (\"isn't responding\") after drawing for a while on Android - Discord\nFixed slow lines wobbling on Windows, most of all zoomed out - Discord\nFixed the floating colour window covering the panels and the side bar - Discord\nFixed crashes and freezes when switching brush libraries or sets - Discord\nFixed a start-up crash that could repeat after an update on some tablets - Discord\nFixed a two-finger undo right after lifting the pen sometimes doing nothing, and an error during a touch closing the app\nAdded Share log under Actions > Help, so a crash can be sent to us\n\n## Plugins\n\nAdded a Krita brushes plugin, and plugins can now bring brush engines of their own; similar plugins are joined into one with a switch for each, your settings coming along; each off until you turn it on in Prefs > Plugins:\n\n1. Krita brushes: Krita presets and bundles draw with Krita's own engines, MyPaint brushes, SVG tips and thick paint, with a Krita brush studio\n2. Brush engines: a plugin can draw the brushes it imports and give them a studio of their own\n3. Phone layout: keeps the interface clear of the status bar and the camera cutout\n4. Keyboard shortcuts: keys for zooming, fitting, turning and panning the canvas, on Android too, and no longer switching itself off - issue #213\n5. ColorDrop tools: fills by all layers no longer leak past light or coloured lines - issue #212\n6. QuickShape curves: curves keep their sharp turns and S-bends, an anchor dragged takes its controls along, and long curves edit faster - PR #246 by wesleydanieell\n7. Colour triangle: a hue ring around the triangle, and a floating colour window with the picker alone - Discord\n8. Interface: sizes for the floating panels, menus, side bar, top bar and panels each - Discord\n9. Settings with a few named choices open a menu of their choices, not a slider - Discord\n",
+  "prerelease": true,
+  "draft": false,
+  "published_at": "2026-11-17T16:42:57Z",
+  "assets": [
+   {
+    "id": 759781558,
+    "name": "procraft-0.0.7-beta-android-arm64.apk",
+    "size": 29426281,
+    "content_type": "application/vnd.android.package-archive",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-android-arm64.apk"
+   },
+   {
+    "id": 759781562,
+    "name": "procraft-0.0.7-beta-android-legacy-arm32.apk",
+    "size": 23048815,
+    "content_type": "application/vnd.android.package-archive",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-android-legacy-arm32.apk"
+   },
+   {
+    "id": 759781567,
+    "name": "procraft-0.0.7-beta-linux-aarch64.AppImage",
+    "size": 23001608,
+    "content_type": "application/vnd.appimage",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-linux-aarch64.AppImage"
+   },
+   {
+    "id": 759781557,
+    "name": "procraft-0.0.7-beta-linux-aarch64.deb",
+    "size": 24673816,
+    "content_type": "application/x-debian-package",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-linux-aarch64.deb"
+   },
+   {
+    "id": 759781601,
+    "name": "procraft-0.0.7-beta-linux-aarch64.tar.gz",
+    "size": 23755752,
+    "content_type": "application/x-gtar",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-linux-aarch64.tar.gz"
+   },
+   {
+    "id": 759781643,
+    "name": "procraft-0.0.7-beta-linux-x86_64.AppImage",
+    "size": 23960056,
+    "content_type": "application/vnd.appimage",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-linux-x86_64.AppImage"
+   },
+   {
+    "id": 759781661,
+    "name": "procraft-0.0.7-beta-linux-x86_64.deb",
+    "size": 25348998,
+    "content_type": "application/x-debian-package",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-linux-x86_64.deb"
+   },
+   {
+    "id": 759781656,
+    "name": "procraft-0.0.7-beta-linux-x86_64.tar.gz",
+    "size": 24740918,
+    "content_type": "application/x-gtar",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-linux-x86_64.tar.gz"
+   },
+   {
+    "id": 759781658,
+    "name": "procraft-0.0.7-beta-macos-universal.dmg",
+    "size": 49112122,
+    "content_type": "application/x-apple-diskimage",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-macos-universal.dmg"
+   },
+   {
+    "id": 759781674,
+    "name": "procraft-0.0.7-beta-windows-arm64-portable.zip",
+    "size": 33894653,
+    "content_type": "application/zip",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-windows-arm64-portable.zip"
+   },
+   {
+    "id": 759781720,
+    "name": "procraft-0.0.7-beta-windows-arm64.msi",
+    "size": 26763264,
+    "content_type": "application/x-msi",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-windows-arm64.msi"
+   },
+   {
+    "id": 759781739,
+    "name": "procraft-0.0.7-beta-windows-x64-portable.zip",
+    "size": 35358360,
+    "content_type": "application/zip",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-windows-x64-portable.zip"
+   },
+   {
+    "id": 759781747,
+    "name": "procraft-0.0.7-beta-windows-x64.msi",
+    "size": 28553216,
+    "content_type": "application/x-msi",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/procraft-0.0.7-beta-windows-x64.msi"
+   },
+   {
+    "id": 759781563,
+    "name": "SHA256SUMS.txt",
+    "size": 1388,
+    "content_type": "text/plain; charset=utf-8",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.7-beta/SHA256SUMS.txt"
+   }
+  ]
+ },
+ {
+  "tag_name": "v0.0.6-beta",
+  "name": "v0.0.6-beta",
+  "body": "## What's New\r\n\r\nFixed the desktop app crashing or closing at start on PCs with Intel graphics - issues #37, #102\r\nFixed black boxes and solid-looking strokes on Samsung tablets with Exynos graphics - issue #153\r\nFixed brush strokes losing their thin tapered ends - issue #122\r\nFixed the thinnest brush sizes drawing too thick - issue #100\r\nFixed see-through specks in some combined brushes, and imported brushes drawing much nearer their own look: faint second tips, dotted tips and paper grains - issue #150\r\nFixed the Brush Studio's drawing pad drawing at the same size whatever the brush's maximum size - issue #162\r\nFixed copy and paste between canvases of different sizes cutting the drawing off - issue #101\r\nFixed blurs and other adjustments painting outside an alpha locked layer, and Liquify now leaves such a layer alone - issue #113\r\nFixed the smudge tool moving paint outside the selection - issue #129\r\nFixed the floating colour panel not moving and its buttons not responding - issues #108, #161\r\nFixed the interface showing mirrored on tablets set to a right-to-left language - issue #160\r\nFixed the first artwork after starting taking seconds to open, and artworks with many brushes imported opening slowly - issues #106, #159\r\nFixed a turned canvas's jagged edges and its stretched zoom from the gallery - issues #158, #171\r\nFixed blocky steps in the slider glass and a white flash opening a canvas with a coloured background - issues #124, #125\r\nFixed the brush cursor flickering over the top bar - issue #175\r\nFixed Automatic selection ignoring the reference layer - issue #169\r\nFixed narrow windows, the Reference window's Face tab and a Linux touchscreen with a resting hand - issues #80, #91, #147\r\nAdded brush libraries: several libraries of brush sets to switch between, make, rename, duplicate or delete, each shared as one file, and the default library restored beside your own - issues #19, #156\r\nAdded Uncombine for combined brushes, and a question before the Brush Studio's reset buttons - issues #154, #155\r\nAdded a pen button that erases only while held (Gesture controls > Erase), and the Huawei M-Pencil's double-tap - issues #104, #172\r\nAdded Android 9 support (Fire tablets, Galaxy Tab S3) and Liquify's size ring on Android - issues #110, #157\r\nFixed QuickShape on smoothed brushes and the Brush Studio on short screens - PRs #65 by lashmanRB, #140 by wesleydanieell\r\nFixed the washed-out desktop window on Linux, and the background row opens colours on the desktop - PRs #94, #97 by zednaked\r\n\r\nAdded palm rejection: a resting hand neither draws nor moves the canvas while the pen is near - Discord\r\nAdded the colour models on Android: the disc, Classic and Value in HSB, HLS, HSY\u2032 or OKLab - Discord\r\nAdded pen pressure on Windows with Windows Ink turned off (WinTab), F11 for full screen and the on-screen keyboard on Windows tablets - Discord\r\nFixed layers lost after cropping a canvas (they come back), and a layer that can't be read is never saved over: its file is kept and the app says which layer - Discord\r\nFixed imported Krita brushes losing their tips, textures and masking brushes, and Krita and GIMP brushes drawing softer or harder than in their own apps - Discord\r\nFixed imported Clip Studio brushes losing textures, patterns, ribbons, pressure and tapers, spray brushes scattering, and .sutg groups import - Discord\r\nFixed small tips from imported brushes drawing in big blocks, and large tips looking soft - Discord\r\nFixed lag and freezes with many brushes imported, after a long stroke, while undoing and while transforming - Discord\r\nFixed fast strokes coming out with corners on Windows, and the desktop's layer limit now grows with the computer's memory - Discord\r\nFixed the text style bar not showing above the keyboard on Android 10 tablets - Discord\r\nAdded the missing Combine Modes: Subtract, Divide and Linear Height - Discord\r\n\r\nAdded a signed and notarized Mac download\r\nAdded ColorDrop's stretchy drag, its fill spreading in from where it lands, and Frame and Page names for new frames and pages\r\nAdded messages when the brush library or a time-lapse can't be saved on a full disk, and a notice when the 32-bit Android app runs on a 64-bit tablet\r\nFixed watery brushes missing their wet rim, exported pattern brushes drawing plain noise, and imported brushes' sizes shrinking after a restart\r\nFixed drawing hitching with the Layers panel open, and the desktop taking ten seconds or more to show the first canvas on Direct3D 12\r\nFixed many smaller brush, layer, transform and desktop problems\r\n\r\n## Plugins\r\n\r\nAdded Plugins that add buttons, panels and kinds of layer, each off until you turn it on in Prefs > Plugins:\r\n\r\n1. Vector layers: layers whose strokes stay editable and sharp at any zoom, with every brush: select, move, recolour, fill, snap shapes, nudge with Smudge, erase softly or cut, and share as SVG (THIS PLUGIN IS WIP)\r\n2. Keyboard shortcuts: change any of the app's shortcuts, on the desktop and with a keyboard on Android\r\n3. Brush sounds: a sound as you draw, by the brush, or recordings of your own\r\n4. Tweening: Animation Assist draws the frame between two frames\r\n5. Paper texture: paper with a grain behind a layer - issue #112\r\n6. Grid layer: a layer with a grid in the brush colour\r\n7. QuickShape curves: a stroke that bends more than once snaps to a curve you can reshape\r\n8. Colour triangle: Classic picks in a triangle\r\n9. Interface colour: the app's blue in a colour of your own\r\n10. Radial symmetry segments: 2 to 32 parts instead of 8\r\n11. ColorDrop fills by all layers: fills stop at lines on every layer you see\r\n12. Opacity of picked layers: one picked layer's opacity changes them all\r\n13. Panels stay open: painting with a panel open leaves it open\r\n14. Hide undo notices: undo and redo without the notice at the top\r\n15. Brush randomiser: a Randomise button in the Brush Studio\r\n\r\nPlugins can now add buttons that change your artwork (asking first, one undo each), panels of their own, the colour picker drawn their way, and kinds of layer the app draws with its own brushes\r\n",
+  "prerelease": false,
+  "draft": false,
+  "published_at": "2026-11-13T21:01:04Z",
+  "assets": [
+   {
+    "id": 745119187,
+    "name": "procraft-0.0.6-beta-android-arm64.apk",
+    "size": 29370445,
+    "content_type": "application/vnd.android.package-archive",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-android-arm64.apk"
+   },
+   {
+    "id": 745119193,
+    "name": "procraft-0.0.6-beta-android-legacy-arm32.apk",
+    "size": 23936859,
+    "content_type": "application/vnd.android.package-archive",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-android-legacy-arm32.apk"
+   },
+   {
+    "id": 745119194,
+    "name": "procraft-0.0.6-beta-linux-x86_64.AppImage",
+    "size": 23046648,
+    "content_type": "application/vnd.appimage",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-linux-x86_64.AppImage"
+   },
+   {
+    "id": 745119196,
+    "name": "procraft-0.0.6-beta-linux-x86_64.deb",
+    "size": 24336250,
+    "content_type": "application/x-debian-package",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-linux-x86_64.deb"
+   },
+   {
+    "id": 745119236,
+    "name": "procraft-0.0.6-beta-linux-x86_64.tar.gz",
+    "size": 23732913,
+    "content_type": "application/x-gtar",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-linux-x86_64.tar.gz"
+   },
+   {
+    "id": 745119307,
+    "name": "procraft-0.0.6-beta-macos-universal.dmg",
+    "size": 46889772,
+    "content_type": "application/x-apple-diskimage",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-macos-universal.dmg"
+   },
+   {
+    "id": 745119308,
+    "name": "procraft-0.0.6-beta-windows-arm64-portable.zip",
+    "size": 22252857,
+    "content_type": "application/zip",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-windows-arm64-portable.zip"
+   },
+   {
+    "id": 745119311,
+    "name": "procraft-0.0.6-beta-windows-arm64.msi",
+    "size": 18239488,
+    "content_type": "application/x-msi",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-windows-arm64.msi"
+   },
+   {
+    "id": 745119319,
+    "name": "procraft-0.0.6-beta-windows-x64-portable.zip",
+    "size": 23339184,
+    "content_type": "application/zip",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-windows-x64-portable.zip"
+   },
+   {
+    "id": 745119329,
+    "name": "procraft-0.0.6-beta-windows-x64.msi",
+    "size": 19365888,
+    "content_type": "application/x-msi",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/procraft-0.0.6-beta-windows-x64.msi"
+   },
+   {
+    "id": 745119195,
+    "name": "SHA256SUMS.txt",
+    "size": 1068,
+    "content_type": "text/plain; charset=utf-8",
+    "browser_download_url": "https://github.com/artcraft-android/procraft/releases/download/v0.0.6-beta/SHA256SUMS.txt"
+   }
+  ]
+ }
+]

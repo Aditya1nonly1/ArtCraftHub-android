@@ -4,6 +4,8 @@ uniffi::setup_scaffolding!();
 
 pub mod assets;
 pub mod error;
+pub mod github;
+pub mod http;
 pub mod sources;
 pub mod version;
 
