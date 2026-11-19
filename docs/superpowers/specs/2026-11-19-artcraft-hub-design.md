@@ -15,7 +15,8 @@ desktop builds, apps outside the `artcraft-android` org.
 
 | Topic | Decision | Why |
 |---|---|---|
-| App list | Discovered automatically from the GitHub org and its Releases | New apps appear with zero maintenance |
+| App list | User-managed **Sources**: pasted GitHub links (an org or a single repo). The `artcraft-android` org is pre-added; only `github.com/artcraft-android/...` links are accepted | The hub only checks what the user chose; new apps in the org still appear automatically; restricting to the org keeps it safe |
+| Obtainium | Import sources from an Obtainium export file, and a "Track in Obtainium" button per app. The hub still installs and updates by itself | Users already use Obtainium; importing saves typing, the button keeps both tools in sync; not depending on Obtainium keeps the hub fully working without it |
 | v1 features | Browse & install, update check, open, uninstall/manage | User choice |
 | UI | Kotlin + Jetpack Compose screens, Rust core via UniFFI | Fastest start-up, native feel, battery-friendly; same proven structure as ProCraft |
 | Betas | Prereleases are shown (every ArtCraft release is `-beta` today) | Otherwise the hub would be empty |
@@ -61,8 +62,16 @@ licence notice is kept on the adapted part).
 Modules:
 
 - `github` — HTTP client (`ureq` + `rustls` + `webpki-roots`, no OpenSSL).
-  Lists org repos and their releases. Sends `If-None-Match` with stored ETags so
+  Lists the repos behind each source (org → all its repos, repo → just that one)
+  and their releases. Sends `If-None-Match` with stored ETags so
   unchanged data costs nothing against the 60 requests/hour anonymous limit.
+- `sources` — parses and validates pasted links. Accepts
+  `https://github.com/artcraft-android`, `https://github.com/artcraft-android/<repo>`
+  (with or without `https://`, `www.`, trailing `/`, `.git`, `/releases...`) and
+  `obtainium://add/<url>` links. Rejects anything outside the `artcraft-android`
+  org with a clear message. Stores the list (default: the org) in the data dir.
+  Also parses an Obtainium export JSON (`apps[].url`) and returns the ArtCraft
+  repos found in it.
 - `catalog` — turns repos + releases into `AppEntry` records: id, name,
   description, package name, latest version, prerelease flag, release notes,
   chosen asset. Skips repos with no APK asset and the hub itself.
@@ -88,6 +97,11 @@ UniFFI surface (sketch):
 ```rust
 #[uniffi::export] fn hub_new(data_dir: String, cache_dir: String, abis: Vec<String>) -> Arc<Hub>;
 impl Hub {
+    fn sources(&self) -> Vec<Source>;
+    fn add_source(&self, link: String) -> Result<Source, HubError>;     // validates
+    fn remove_source(&self, id: String);
+    fn import_obtainium(&self, json: String) -> Result<Vec<Source>, HubError>;
+    fn obtainium_link(&self, app_id: String) -> String;   // obtainium://add/<repo url>
     fn cached_catalog(&self) -> Vec<AppEntry>;              // instant, offline
     fn refresh_catalog(&self) -> Result<Vec<AppEntry>, HubError>;
     fn download(&self, app_id: String, progress: Box<dyn DownloadProgress>)
@@ -104,7 +118,9 @@ Rust.
 
 - **Screens:** Catalogue (cards with icon, name, version, state chip and a primary
   button: Install / Update / Open), App detail (description, release notes,
-  size, version, Uninstall), Settings (about, licences, clear cache).
+  size, version, Uninstall, "Track in Obtainium"), **Sources** (list of links,
+  paste box with Add, remove, "Import from Obtainium" file picker, reset to
+  default), Settings (about, licences, clear cache).
 - **AndroidBridge:**
   - *Installed state:* `PackageManager.getPackageInfo` per catalogue package.
     Package visibility on Android 11+ is granted with a `<queries>` block that
@@ -115,6 +131,9 @@ Rust.
     "Install unknown apps" for the hub.
   - *Open:* `getLaunchIntentForPackage`.
   - *Uninstall:* `Intent.ACTION_DELETE` (permission `REQUEST_DELETE_PACKAGES`).
+  - *Obtainium:* "Track in Obtainium" opens `obtainium://add/<repo url>`; if
+    Obtainium isn't installed, the button opens its download page. Import uses
+    the system file picker (`ACTION_OPEN_DOCUMENT`), no storage permission.
   - Listens for package added/removed broadcasts to refresh state live.
 - **Icons:** installed apps use their real icon from `PackageManager`; others use
   `fastlane/metadata/android/en-US/images/icon.png` from the repo when present,
@@ -132,7 +151,7 @@ Rust.
 
 ## 4. Error handling
 
-Rust returns typed `HubError` variants (`Offline`, `RateLimited { reset_at }`,
+Rust returns typed `HubError` variants (`InvalidLink`, `NotArtcraft`, `Offline`, `RateLimited { reset_at }`,
 `NotFound`, `ChecksumMismatch`, `Io`, `Parse`); no panics (lints forbid
 `unwrap`/`expect`/`panic`). Kotlin maps each one to a plain message with a retry.
 Installer failures are surfaced too, notably *signature mismatch* ("this app was
@@ -140,7 +159,8 @@ installed from another source; uninstall it first to switch to the hub's copy").
 
 ## 5. Testing
 
-- Rust unit tests: asset selection against the real asset names listed above,
+- Rust unit tests: link parsing and validation (accepted and rejected forms),
+  Obtainium export parsing, asset selection against the real asset names listed above,
   version comparison, catalogue building from recorded GitHub JSON fixtures,
   checksum parsing. Run with `cargo test` on the desktop.
 - Kotlin: ViewModel tests with a fake core/bridge; one instrumented smoke test on
@@ -150,7 +170,7 @@ installed from another source; uninstall it first to switch to the hub's copy").
 
 ## 6. Release
 
-GitHub Releases on `Wired-Navi0x17/ArtCraftHub-android`, per-ABI APKs and
+GitHub Releases on `l41n-pr0t0/ArtCraftHub-android`, per-ABI APKs and
 `SHA256SUMS.txt` (same scheme as ProCraft) so the hub can also be tracked by
 Obtainium. Signing key provided through environment variables, never committed.
 
@@ -158,5 +178,6 @@ Obtainium. Signing key provided through environment variables, never committed.
 
 - Application ID of the hub itself. It must not start with
   `io.github.artcraftandroid.` (that namespace belongs to the ArtCraft apps).
-  Proposed: `io.github.wirednavi0x17.artcrafthub` (tied to the GitHub account that
-  hosts the repo; it is an internal identifier, not shown to users).
+  Proposed: `io.github.l41n_pr0t0.artcrafthub` (matches the GitHub account that
+  hosts the repo; `-` is not allowed in IDs so it becomes `_`; internal, never
+  shown to users, cannot change after the first release).
