@@ -2,6 +2,7 @@
 
 uniffi::setup_scaffolding!();
 
+pub mod assets;
 pub mod error;
 pub mod sources;
 pub mod version;
