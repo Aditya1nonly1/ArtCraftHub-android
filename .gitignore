@@ -1,0 +1,16 @@
+# Rust
+/target/
+# Gradle / Android
+.gradle/
+build/
+local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+.idea/
+*.iml
+.cxx/
+# Nix
+result
+.direnv/
