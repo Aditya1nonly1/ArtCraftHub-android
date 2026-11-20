@@ -110,7 +110,10 @@ class MainActivity : ComponentActivity() {
                             onCancel = model::cancel,
                             onUninstall = model::uninstall,
                             extraActions = {
-                                TextButton(onClick = { openInObtainium(this@MainActivity, selected.entry.repoUrl) }) {
+                                TextButton(onClick = {
+                                    val app = selected.entry
+                                    openInObtainium(this@MainActivity, app.repoUrl, app.packageName, app.name)
+                                }) {
                                     Text("Track in Obtainium")
                                 }
                             },

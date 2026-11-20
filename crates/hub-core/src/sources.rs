@@ -90,10 +90,35 @@ pub fn default_sources() -> Vec<Source> {
     vec![org_source()]
 }
 
-/// Deep link that adds `repo_url` to Obtainium.
+/// Deep link that imports an app into Obtainium with "Include prereleases" on.
+///
+/// `obtainium://add/<url>` would leave that setting off, and Obtainium then reports "Could not
+/// find a suitable release" for ArtCraft apps, which only publish pre-releases so far.
 #[uniffi::export]
-pub fn obtainium_link(repo_url: &str) -> String {
-    format!("obtainium://add/{repo_url}")
+pub fn obtainium_link(repo_url: &str, package_name: &str, name: &str) -> String {
+    let author = repo_url.trim_end_matches('/').rsplit('/').nth(1).unwrap_or_default();
+    let settings = serde_json::json!({ "includePrereleases": true, "fallbackToOlderReleases": true });
+    let app = serde_json::json!({
+        "id": package_name,
+        "url": repo_url,
+        "author": author,
+        "name": name,
+        "additionalSettings": settings.to_string(),
+    });
+    format!("obtainium://app/{}", percent_encode(&app.to_string()))
+}
+
+/// Encodes every byte except RFC 3986's unreserved ones, so the JSON survives as one URI segment.
+fn percent_encode(s: &str) -> String {
+    let mut out = String::with_capacity(s.len() * 3);
+    for b in s.bytes() {
+        if b.is_ascii_alphanumeric() || b"-_.~".contains(&b) {
+            out.push(char::from(b));
+        } else {
+            out.push_str(&format!("%{b:02X}"));
+        }
+    }
+    out
 }
 
 #[cfg(test)]
@@ -162,10 +187,36 @@ mod tests {
         assert_eq!(default_sources()[0].id, "artcraft-android");
     }
     #[test]
-    fn obtainium_link_format() {
-        assert_eq!(
-            obtainium_link("https://github.com/artcraft-android/procraft"),
-            "obtainium://add/https://github.com/artcraft-android/procraft"
+    fn obtainium_link_carries_app_with_prereleases_on() {
+        let link = obtainium_link(
+            "https://github.com/artcraft-android/procraft",
+            "io.github.artcraftandroid.procraft",
+            "ProCraft",
         );
+        let json = link.strip_prefix("obtainium://app/").unwrap();
+        assert!(json.bytes().all(|b| b.is_ascii_alphanumeric() || b"-_.~%".contains(&b)), "{json}");
+        let app: serde_json::Value = serde_json::from_str(&percent_decode(json)).unwrap();
+        assert_eq!(app["id"], "io.github.artcraftandroid.procraft");
+        assert_eq!(app["url"], "https://github.com/artcraft-android/procraft");
+        assert_eq!(app["author"], "artcraft-android");
+        assert_eq!(app["name"], "ProCraft");
+        let settings: serde_json::Value = serde_json::from_str(app["additionalSettings"].as_str().unwrap()).unwrap();
+        assert_eq!(settings["includePrereleases"], true);
+    }
+
+    fn percent_decode(s: &str) -> String {
+        let b = s.as_bytes();
+        let mut out = Vec::new();
+        let mut i = 0;
+        while i < b.len() {
+            if b[i] == b'%' {
+                out.push(u8::from_str_radix(&s[i + 1..i + 3], 16).unwrap());
+                i += 3;
+            } else {
+                out.push(b[i]);
+                i += 1;
+            }
+        }
+        String::from_utf8(out).unwrap()
     }
 }
