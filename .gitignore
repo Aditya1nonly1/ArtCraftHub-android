@@ -14,3 +14,4 @@ local.properties
 # Nix
 result
 .direnv/
+signing-key-backup/
