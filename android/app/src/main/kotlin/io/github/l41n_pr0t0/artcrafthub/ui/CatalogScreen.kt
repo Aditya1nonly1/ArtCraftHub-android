@@ -9,7 +9,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -28,7 +27,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -300,8 +298,8 @@ private fun FilterTabs(selected: Filter, onSelect: (Filter) -> Unit, count: (Fil
         Box(Modifier.width(36.dp).height(3.dp).clip(PillShape).background(Paper.copy(alpha = 0.35f)))
         Spacer(Modifier.height(14.dp))
         Row(
-            Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Filter.entries.forEach { f ->
                 val on = f == selected
@@ -319,11 +317,11 @@ private fun FilterTabs(selected: Filter, onSelect: (Filter) -> Unit, count: (Fil
                                 },
                             )
                             .clickable { onSelect(f) }
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                            .padding(horizontal = 11.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(f.label, style = MaterialTheme.typography.bodyMedium, color = if (on) Paper else Muted)
-                        Spacer(Modifier.width(6.dp))
+                        Spacer(Modifier.width(5.dp))
                         Text("${count(f)}", style = Mono.copy(fontSize = 11.sp), color = if (on) Muted else Faint)
                     }
                     Spacer(Modifier.height(6.dp))
