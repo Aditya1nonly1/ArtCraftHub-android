@@ -24,7 +24,7 @@ jobs:
         # without building the Rust core for Android first, which CI already covers.
         language: [rust, actions]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
