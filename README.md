@@ -60,7 +60,7 @@ The core is Rust (GitHub client, release parsing, APK choice, downloads with che
 is called from a Kotlin + Jetpack Compose app through [UniFFI](https://mozilla.github.io/uniffi-rs/).
 
 Needs: Nix with flakes, or by hand Rust 1.95+, `cargo-ndk`, JDK 21, the Android SDK and
-NDK 27.2.12479018.
+NDK 27.2.12479018. [CONTRIBUTING.md](CONTRIBUTING.md) walks through setting these up without Nix.
 
 ```sh
 nix develop                     # Rust with the Android targets, cargo-ndk, JDK 21, adb
@@ -89,11 +89,30 @@ Set `hub.version` and `hub.versionCode` in `android/gradle.properties`, then pus
 The release workflow builds one signed APK per ABI, writes `SHA256SUMS.txt` and publishes the
 GitHub Release. Tags with a `-` (like `v0.2.0-beta`) are marked as pre-releases.
 
-## Ideas
+## Roadmap
 
-- An app-specific baseline profile (needs a macrobenchmark module) for an even faster first start.
-- Background update checks with a notification.
-- A GitHub token setting for people who hit the API's hourly limit.
+Planned for [1.1.0](https://github.com/l41n-pr0t0/ArtCraftHub-android/milestone/1): accessibility
+labels for the app ring ([#1](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/1)), more tests
+([#2](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/2)), translatable text
+([#3](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/3)) and release dates
+([#4](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/4)).
+
+Later: background update checks ([#6](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/6)),
+an optional GitHub token ([#7](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/7)),
+a baseline profile ([#8](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/8)) and
+self-updates ([#9](https://github.com/l41n-pr0t0/ArtCraftHub-android/issues/9)).
+What changed in each release is in the [changelog](CHANGELOG.md).
+
+## Contributing
+
+Contributions are welcome, including first ones: issues labelled
+[`good first issue`](https://github.com/l41n-pr0t0/ArtCraftHub-android/labels/good%20first%20issue)
+say which files to change and how to test. Start with [CONTRIBUTING.md](CONTRIBUTING.md), and
+follow the [code of conduct](CODE_OF_CONDUCT.md).
+
+Questions go to [Discussions](https://github.com/l41n-pr0t0/ArtCraftHub-android/discussions), help
+with problems is in [SUPPORT.md](SUPPORT.md), and vulnerabilities are reported privately as
+described in [SECURITY.md](SECURITY.md).
 
 ## Credits and licence
 
