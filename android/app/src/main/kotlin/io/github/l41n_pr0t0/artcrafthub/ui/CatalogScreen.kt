@@ -110,12 +110,12 @@ fun CatalogScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item(span = { GridItemSpan(maxLineSpan) }, key = "ring") {
-                HubRing(state.apps, state.refreshing, packageName, icons, onSelect)
+                HubRing(state.apps, state.refreshing || !state.loaded, packageName, icons, onSelect)
             }
             item(span = { GridItemSpan(maxLineSpan) }, key = "tabs") {
                 FilterTabs(filter, { filter = it }) { f -> state.apps.count { f.keep(it.state) } }
             }
-            if (shown.isEmpty()) {
+            if (shown.isEmpty() && state.loaded) {
                 item(span = { GridItemSpan(maxLineSpan) }, key = "empty") {
                     Text(
                         when {

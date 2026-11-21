@@ -25,6 +25,8 @@ data class HubUiState(
     val refreshing: Boolean = false,
     val message: String? = null,
     val selectedId: String? = null,
+    /** False until the cached catalogue has been read, so the screen doesn't flash "no apps". */
+    val loaded: Boolean = false,
 )
 
 /**
@@ -79,6 +81,7 @@ class HubViewModel(
             entries = cached
             _state.update { it.copy(sources = sources) }
             publish()
+            _state.update { it.copy(loaded = true) }
             refresh()
         }
         viewModelScope.launch {

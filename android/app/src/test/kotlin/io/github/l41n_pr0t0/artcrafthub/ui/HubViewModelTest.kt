@@ -45,6 +45,13 @@ class HubViewModelTest {
         assertEquals(false, vm.state.value.refreshing)
     }
 
+    @Test fun loadedOnlyOnceTheCacheHasBeenRead() = runTest(dispatcher) {
+        val vm = vm()
+        assertEquals(false, vm.state.value.loaded)
+        advanceUntilIdle()
+        assertEquals(true, vm.state.value.loaded)
+    }
+
     @Test fun refreshErrorKeepsAppsAndShowsMessage() = runTest(dispatcher) {
         core.refreshError = HubException.Offline()
         val vm = vm()
