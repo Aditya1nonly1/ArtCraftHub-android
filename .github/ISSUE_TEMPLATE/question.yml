@@ -1,0 +1,18 @@
+name: Question
+description: Ask how something works
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: For open-ended questions or ideas, [Discussions](https://github.com/l41n-pr0t0/ArtCraftHub-android/discussions) is often the better place.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you already looked at?
+      description: "Optional: README sections, settings, other issues."

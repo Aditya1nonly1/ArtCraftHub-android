@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest something the hub could do
+labels: [feature request]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The problem or situation, not the solution yet.
+      placeholder: I install ArtCraft apps on two phones and have to check each one for updates by hand.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      placeholder: A notification when an installed app has an update.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Anything you've tried or considered instead?
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to work on this myself.

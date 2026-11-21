@@ -1,0 +1,22 @@
+name: Documentation improvement
+description: Something in the README or other docs is wrong, missing or unclear
+labels: [documentation]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Which page or section?
+      placeholder: README → Build
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested wording
+      description: Optional.

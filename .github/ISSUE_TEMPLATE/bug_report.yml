@@ -1,0 +1,57 @@
+name: Bug report
+description: Something in the hub doesn't work as described
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Security problems go to [private reporting](https://github.com/l41n-pr0t0/ArtCraftHub-android/security/advisories/new), not here.
+        A problem with an ArtCraft app itself (ProCraft, PdfCraft…) belongs in [that app's repository](https://github.com/artcraft-android).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+      placeholder: I tapped Update on PdfCraft. I expected Android's install dialog, but the hub said "The download was damaged".
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the hub
+        2. Tap …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Hub version
+      description: Shown under Settings (the gear icon).
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Phone and Android version
+      placeholder: Galaxy S24, Android 16 (One UI 8)
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Where did you install the hub from?
+      options:
+        - GitHub release APK
+        - Obtainium
+        - Built it myself
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or logs
+      description: Optional. A screenshot helps for layout problems; `adb logcat` output helps for crashes.
+      render: shell

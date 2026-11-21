@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and ideas (Discussions)
+    url: https://github.com/l41n-pr0t0/ArtCraftHub-android/discussions
+    about: Ask, share an idea, or show how you use the hub.
+  - name: Report a security vulnerability
+    url: https://github.com/l41n-pr0t0/ArtCraftHub-android/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue.
+  - name: Problem with an ArtCraft app (ProCraft, PdfCraft, …)
+    url: https://github.com/artcraft-android
+    about: The apps themselves live in the artcraft-android organisation.
