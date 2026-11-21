@@ -2,6 +2,8 @@ package io.github.l41n_pr0t0.artcrafthub.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +12,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,12 +67,13 @@ fun HubHeader(
         VRule()
         Spacer(Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
-            Text(
+            // a wordmark: shrinks to fit narrow screens, and doesn't grow with the system font size
+            val px = with(LocalDensity.current) { 19.dp.toSp() }
+            BasicText(
                 title.uppercase(),
-                style = Spaced.copy(fontSize = 19.sp),
-                color = Paper,
+                style = Spaced.copy(color = Paper),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                autoSize = TextAutoSize.StepBased(minFontSize = px * 0.6f, maxFontSize = px, stepSize = 0.5.sp),
             )
             Text(subtitle, style = Mono, color = Muted, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
@@ -94,6 +101,12 @@ fun SectionLabel(text: String, modifier: Modifier = Modifier, trailing: String? 
 
 val PillShape = RoundedCornerShape(50)
 
+/** Readable line length on wide screens (Fold inner screens, tablets, landscape). */
+val MaxContentWidth = 640.dp
+
+/** Caps a column at [MaxContentWidth] and centres it. */
+fun Modifier.contentWidth(): Modifier = this.fillMaxWidth().wrapContentWidth().widthIn(max = MaxContentWidth)
+
 /** A light, filled pill: the one thing to do. */
 @Composable
 fun SolidButton(
@@ -109,7 +122,7 @@ fun SolidButton(
         enabled = enabled,
         shape = PillShape,
         contentPadding = if (compact) CompactPadding else ButtonDefaults.ContentPadding,
-        modifier = if (compact) modifier.height(30.dp) else modifier.height(46.dp),
+        modifier = if (compact) modifier.heightIn(min = 30.dp) else modifier.heightIn(min = 46.dp),
     ) {
         ButtonContent(text, icon, compact)
     }
@@ -131,7 +144,7 @@ fun GhostButton(
         shape = PillShape,
         border = BorderStroke(1.dp, if (enabled) Paper.copy(alpha = 0.28f) else Hairline),
         contentPadding = if (compact) CompactPadding else ButtonDefaults.ContentPadding,
-        modifier = if (compact) modifier.height(30.dp) else modifier.height(46.dp),
+        modifier = if (compact) modifier.heightIn(min = 30.dp) else modifier.heightIn(min = 46.dp),
     ) {
         ButtonContent(text, icon, compact)
     }

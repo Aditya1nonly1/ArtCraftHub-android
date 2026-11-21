@@ -57,7 +57,8 @@ fun DetailScreen(
             .fillMaxSize()
             .padding(top = contentPadding.calculateTopPadding())
             .verticalScroll(rememberScrollState())
-            .padding(start = 18.dp, end = 18.dp, top = 8.dp, bottom = contentPadding.calculateBottomPadding() + 28.dp),
+            .padding(start = 18.dp, end = 18.dp, top = 8.dp, bottom = contentPadding.calculateBottomPadding() + 28.dp)
+            .contentWidth(),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         // the app itself

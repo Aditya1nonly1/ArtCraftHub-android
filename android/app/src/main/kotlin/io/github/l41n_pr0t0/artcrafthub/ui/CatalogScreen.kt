@@ -23,6 +23,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -51,6 +54,8 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -99,7 +104,8 @@ fun CatalogScreen(
         modifier = Modifier.fillMaxSize().padding(top = contentPadding.calculateTopPadding()),
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            // wider tiles when the system font is large, so names and buttons still fit
+            columns = GridCells.Adaptive(minSize = 98.dp * (1 + (LocalDensity.current.fontScale - 1).coerceIn(0f, 1f) * 0.6f)),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 18.dp,
@@ -155,7 +161,9 @@ private fun HubRing(
         label = "spin",
     )
     BoxWithConstraints(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 8.dp), contentAlignment = Alignment.Center) {
-        val side = min(maxWidth.value, 380f).dp
+        // never taller than about half the screen (landscape, split screen), never huge on tablets
+        val screenHeight = LocalConfiguration.current.screenHeightDp.toFloat()
+        val side = minOf(maxWidth.value, screenHeight * 0.52f, 400f).coerceAtLeast(200f).dp
         val orbit = side * 0.355f
         val ringApps = apps.take(12)
         val n = ringApps.size.coerceAtLeast(1)
@@ -187,6 +195,10 @@ private fun HubRing(
 
 @Composable
 private fun CoreDisc(apps: List<AppUi>, refreshing: Boolean, size: Dp) {
+    // the disc is a drawing: its text scales with the disc, not with the system font size
+    val density = LocalDensity.current
+    fun Dp.fixed() = with(density) { this@fixed.toSp() }
+    val unit = size / 150
     val installed = apps.count { Filter.Installed.keep(it.state) }
     val updates = apps.count { it.state is AppState.UpdateAvailable }
     Box(
@@ -207,23 +219,32 @@ private fun CoreDisc(apps: List<AppUi>, refreshing: Boolean, size: Dp) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             if (apps.isEmpty()) {
-                Icon(Glyphs.Sparkle, null, Modifier.size(34.dp), tint = Paper)
-                Spacer(Modifier.height(8.dp))
-                Text(if (refreshing) "SYNCING" else "PULL TO SYNC", style = Spaced.copy(fontSize = 10.sp), color = Muted)
+                Icon(Glyphs.Sparkle, null, Modifier.size(unit * 34), tint = Paper)
+                Spacer(Modifier.height(unit * 8))
+                Text(if (refreshing) "SYNCING" else "PULL TO SYNC", style = Spaced.copy(fontSize = (unit * 10).fixed()), color = Muted)
             } else {
                 Row(verticalAlignment = Alignment.Bottom) {
-                    Text("$installed", style = MaterialTheme.typography.displaySmall, color = Paper)
-                    Text("/${apps.size}", style = Mono.copy(fontSize = 14.sp), color = Faint, modifier = Modifier.padding(bottom = 6.dp, start = 2.dp))
+                    Text(
+                        "$installed",
+                        style = MaterialTheme.typography.displaySmall.copy(fontSize = (unit * 40).fixed(), lineHeight = (unit * 44).fixed()),
+                        color = Paper,
+                    )
+                    Text(
+                        "/${apps.size}",
+                        style = Mono.copy(fontSize = (unit * 14).fixed()),
+                        color = Faint,
+                        modifier = Modifier.padding(bottom = unit * 6, start = 2.dp),
+                    )
                 }
-                Text("INSTALLED", style = Spaced.copy(fontSize = 9.sp), color = Muted)
-                Spacer(Modifier.height(6.dp))
+                Text("INSTALLED", style = Spaced.copy(fontSize = (unit * 9).fixed()), color = Muted)
+                Spacer(Modifier.height(unit * 6))
                 Text(
                     when (updates) {
                         0 -> "up to date"
                         1 -> "1 update"
                         else -> "$updates updates"
                     },
-                    style = Mono.copy(fontSize = 11.sp),
+                    style = Mono.copy(fontSize = (unit * 11).fixed()),
                     color = if (updates > 0) Paper else Faint,
                 )
             }
@@ -297,8 +318,10 @@ private fun FilterTabs(selected: Filter, onSelect: (Filter) -> Unit, count: (Fil
     Column(Modifier.fillMaxWidth().padding(bottom = 4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.width(36.dp).height(3.dp).clip(PillShape).background(Paper.copy(alpha = 0.35f)))
         Spacer(Modifier.height(14.dp))
+        // spread across the width, and scroll sideways when they don't fit (big fonts, narrow phones)
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier.horizontalScroll(rememberScrollState()).widthIn(min = maxWidth),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Filter.entries.forEach { f ->
@@ -326,11 +349,12 @@ private fun FilterTabs(selected: Filter, onSelect: (Filter) -> Unit, count: (Fil
                     }
                     Spacer(Modifier.height(6.dp))
                     Box(
-                        Modifier.width(18.dp).height(2.dp).clip(PillShape)
+                        Modifier.width(18.dp).height(2.dp)
                             .background(if (on) Paper else Color.Transparent),
                     )
                 }
             }
+        }
         }
         Spacer(Modifier.height(10.dp))
         Box(Modifier.fillMaxWidth().height(1.dp).background(Hairline))

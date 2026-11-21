@@ -8,6 +8,11 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -84,7 +89,9 @@ class MainActivity : ComponentActivity() {
                 }
                 BackHandler(enabled = selected != null || screen != Screen.Catalog, onBack = goBack)
                 Scaffold(
-                    modifier = Modifier.hubBackground(),
+                    // landscape: keep clear of the camera cutout and a side navigation bar
+                    modifier = Modifier.hubBackground()
+                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
                     containerColor = Color.Transparent,
                     topBar = {
                         when {
