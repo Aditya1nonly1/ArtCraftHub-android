@@ -79,20 +79,38 @@ impl Hub {
     }
 
     /// Fetches every source's repos and their latest releases. Offline or rate-limited aborts the
-    /// refresh (the cached catalogue stays); any other per-repo error just skips that repo.
+    /// refresh (the cached catalogue stays). Any other error skips that source or repo, and the
+    /// apps it would have listed keep their cached entries, so a flaky answer (GitHub's secondary
+    /// rate limit sends a plain 403) never empties the catalogue. A deleted repo (404) is dropped.
     pub fn refresh_catalog(&self) -> Result<Vec<AppEntry>, HubError> {
+        let mut complete = true;
         let mut repos: Vec<GhRepo> = Vec::new();
         for source in self.sources() {
-            for repo in skip_soft(self.github.repos(&source))?.unwrap_or_default() {
-                if !repos.iter().any(|r| r.name == repo.name) {
-                    repos.push(repo);
+            match skip_soft(self.github.repos(&source))? {
+                Some(listed) => {
+                    for repo in listed {
+                        if !repos.iter().any(|r| r.name == repo.name) {
+                            repos.push(repo);
+                        }
+                    }
                 }
+                None => complete = false,
             }
         }
         let mut apps = Vec::new();
         for repo in &repos {
-            if let Some(release) = skip_soft(self.github.latest_release(&repo.name))?.flatten() {
-                apps.push(build_entry(repo, &release, &self.abis));
+            match self.github.latest_release(&repo.name) {
+                Ok(Some(release)) => apps.push(build_entry(repo, &release, &self.abis)),
+                Ok(None) | Err(HubError::NotFound) => {}
+                Err(e @ (HubError::Offline | HubError::RateLimited { .. })) => return Err(e),
+                Err(_) => complete = false,
+            }
+        }
+        if !complete {
+            for old in lock(&self.catalog).iter() {
+                if !apps.iter().any(|a| a.id == old.id) {
+                    apps.push(old.clone());
+                }
             }
         }
         apps.sort_by_key(|a| a.name.to_lowercase());
@@ -324,6 +342,31 @@ mod tests {
         assert!(matches!(hub.refresh_catalog(), Err(HubError::Offline)));
         assert_eq!(hub.cached_catalog().len(), 2);
         assert_eq!(env.hub().cached_catalog().len(), 2);
+    }
+
+    #[test]
+    fn failing_source_keeps_its_cached_apps() {
+        let env = Env::new();
+        let hub = env.hub();
+        env.serve_refresh();
+        hub.refresh_catalog().unwrap();
+        // GitHub's secondary rate limit: a 403 without the rate-limit headers
+        env.http.push(ORG_URL, Err(HubError::Io { detail: "HTTP 403".into() }));
+        assert_eq!(hub.refresh_catalog().unwrap().len(), 2);
+        assert_eq!(env.hub().cached_catalog().len(), 2);
+    }
+
+    #[test]
+    fn failing_release_keeps_that_apps_cached_entry() {
+        let env = Env::new();
+        let hub = env.hub();
+        env.serve_refresh();
+        hub.refresh_catalog().unwrap();
+        env.http.ok(ORG_URL, REPOS, None);
+        env.http.push(&rel_url("procraft"), Err(HubError::Io { detail: "HTTP 502".into() }));
+        env.http.ok(&rel_url("pdfcraft-android"), RELEASES, None);
+        let apps = hub.refresh_catalog().unwrap();
+        assert!(apps.iter().any(|a| a.id == "procraft"), "{apps:?}");
     }
 
     #[test]
