@@ -1,0 +1,38 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+    paths: ['**/Cargo.toml', 'Cargo.lock', '.github/workflows/security.yml']
+  pull_request:
+  schedule:
+    - cron: '17 4 * * 1' # Mondays: catch advisories published since the last change
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Rust advisories (cargo audit)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      - run: cargo audit
+
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
