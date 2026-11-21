@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -117,11 +119,7 @@ fun DetailScreen(
             }
         }
         Panel("What's new", entry.latestVersion.takeIf { it.isNotEmpty() }) {
-            Text(
-                entry.releaseNotes.ifBlank { "No release notes." },
-                style = MaterialTheme.typography.bodyMedium,
-                color = Paper.copy(alpha = 0.86f),
-            )
+            ReleaseNotes(entry.releaseNotes)
         }
     }
 }
@@ -147,6 +145,55 @@ private fun Chip(text: String) {
         modifier = Modifier.border(1.dp, Hairline, PillShape).padding(horizontal = 12.dp, vertical = 5.dp),
     )
 }
+
+/** GitHub release notes, with the bits of Markdown they use (headings, bullets, bold, links) tidied up. */
+@Composable
+private fun ReleaseNotes(markdown: String) {
+    val lines = markdownLines(markdown)
+    if (lines.isEmpty()) {
+        Text("No release notes.", style = Mono, color = Muted)
+        return
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        lines.forEach { line ->
+            when (line) {
+                is NoteLine.Heading -> Text(
+                    line.text,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Paper,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+                is NoteLine.Bullet -> Row {
+                    Text("·", style = MaterialTheme.typography.bodyMedium, color = Muted, modifier = Modifier.width(16.dp))
+                    Text(line.text, style = MaterialTheme.typography.bodyMedium, color = Paper.copy(alpha = 0.86f))
+                }
+                is NoteLine.Para -> Text(line.text, style = MaterialTheme.typography.bodyMedium, color = Paper.copy(alpha = 0.86f))
+            }
+        }
+    }
+}
+
+sealed interface NoteLine {
+    val text: String
+    data class Heading(override val text: String) : NoteLine
+    data class Bullet(override val text: String) : NoteLine
+    data class Para(override val text: String) : NoteLine
+}
+
+private val link = Regex("""\[([^\]]+)]\([^)]*\)""")
+private val emphasis = Regex("""(\*\*|__|`)""")
+
+/** Splits release notes into headings, bullets and plain lines; blank lines are dropped. */
+fun markdownLines(markdown: String): List<NoteLine> = markdown.lines().mapNotNull { raw ->
+    val line = raw.trim()
+    if (line.isEmpty()) return@mapNotNull null
+    fun clean(t: String) = t.replace(link, "$1").replace(emphasis, "").trim()
+    when {
+        line.startsWith("#") -> NoteLine.Heading(clean(line.trimStart('#')))
+        line.startsWith("- ") || line.startsWith("* ") || line.startsWith("+ ") -> NoteLine.Bullet(clean(line.drop(2)))
+        else -> NoteLine.Para(clean(line))
+    }
+}.filter { it.text.isNotEmpty() }
 
 /** A size in MB with one decimal, e.g. "14.1 MB". */
 fun megabytes(bytes: Long): String = String.format(Locale.ROOT, "%.1f MB", bytes / 1_000_000.0)

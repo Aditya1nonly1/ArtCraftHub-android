@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         when {
                             selected != null -> HubHeader(
-                                selected.entry.name,
+                                "Details",
                                 model.packageName(selected.entry),
                                 onBack = goBack,
                             )
