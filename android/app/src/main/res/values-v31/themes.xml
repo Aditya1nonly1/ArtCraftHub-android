@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    The launch splash: the bare ArtCraft logo on ink. With no icon background the system's
+    circular mask has nothing to show, so there is no tile or rounded plate behind the logo
+    (an icon pack can't put its frame here either).
+    -->
+    <style name="Theme.Hub" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/ink</item>
+        <item name="android:windowSplashScreenBackground">@color/ink</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+    </style>
+</resources>

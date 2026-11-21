@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Ink from the first frame, so the window never flashes grey before Compose draws. -->
+    <style name="Theme.Hub" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/ink</item>
+    </style>
+</resources>
