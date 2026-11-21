@@ -10,6 +10,14 @@ Android's installer. It doesn't run its own servers and doesn't collect any data
 
 [<img src="https://github.com/ImranR98/Obtainium/blob/main/assets/graphics/badge_obtainium.png?raw=true" alt="Get it on Obtainium" height="54">](https://apps.obtainium.imranr.dev/redirect?r=obtainium%3A%2F%2Fapp%2F%257B%2522id%2522%253A%2522io.github.l41n_pr0t0.artcrafthub%2522%252C%2522url%2522%253A%2522https%253A%252F%252Fgithub.com%252Fl41n-pr0t0%252FArtCraftHub-android%2522%252C%2522author%2522%253A%2522l41n-pr0t0%2522%252C%2522name%2522%253A%2522ArtCraft%2520Hub%2522%252C%2522additionalSettings%2522%253A%2522%257B%255C%2522includePrereleases%255C%2522%253Atrue%252C%255C%2522fallbackToOlderReleases%255C%2522%253Atrue%257D%2522%257D)
 
+<p>
+  <img src="docs/screenshots/1-catalogue.png" width="19%" alt="Catalogue: every app on a ring around the installed count">
+  <img src="docs/screenshots/2-apps.png" width="19%" alt="The app grid with filter tabs">
+  <img src="docs/screenshots/3-details.png" width="19%" alt="An app's details and release notes">
+  <img src="docs/screenshots/4-sources.png" width="19%" alt="Sources: the GitHub links the hub checks">
+  <img src="docs/screenshots/5-settings.png" width="19%" alt="Settings: version, cache and licences">
+</p>
+
 ## Features
 
 - **Catalogue** of every ArtCraft app, betas included, with icons, descriptions and release notes.
@@ -21,6 +29,9 @@ Android's installer. It doesn't run its own servers and doesn't collect any data
   links are accepted.
 - **Track in Obtainium**: one tap adds an app to Obtainium, with pre-releases included, if you'd
   rather it handle updates.
+- **A dark, monochrome glass design**: every app orbits a counter of what's installed; apps you
+  don't have yet are shown in grey and take on their colours once installed. Works on small and
+  large phones, foldables and tablets, and with large system fonts.
 - Fast and small: about a 4 MB download, and the cached list shows in roughly 150 ms on a recent phone.
 
 ## Install
@@ -32,9 +43,13 @@ Android's installer. It doesn't run its own servers and doesn't collect any data
 3. In the hub, tap **Install** on an app. The first time, Android asks you to allow the hub to
    install apps. Every install and uninstall is confirmed by Android's own dialog.
 
-Or add the hub to Obtainium with the badge above. If you add it by hand instead, turn on
-**Include prereleases**: the hub and the ArtCraft apps only publish pre-releases so far, and
-without it Obtainium says "Could not find a suitable release".
+Or add the hub to Obtainium with the badge above: it finds the newest release and picks the APK
+for your phone. To track an ArtCraft app in Obtainium by hand, turn on **Include prereleases**:
+the ArtCraft apps only publish pre-releases so far, and without it Obtainium says "Could not find
+a suitable release".
+
+Every release is signed with the same key, so a new version installs over the old one (from the
+release page, from Obtainium, or over the 0.1.0 beta) and keeps your sources.
 
 If an app was installed from somewhere else and signed with a different key, Android refuses to
 update it; the hub tells you to uninstall it first.
