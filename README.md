@@ -8,7 +8,7 @@ The hub reads the apps' GitHub releases, picks the right APK for your phone (64-
 x86_64), checks it against the release's `SHA256SUMS.txt` when there is one, and hands it to
 Android's installer. It doesn't run its own servers and doesn't collect any data.
 
-[<img src="https://github.com/ImranR98/Obtainium/blob/main/assets/graphics/badge_obtainium.png?raw=true" alt="Get it on Obtainium" height="54">](https://apps.obtainium.imranr.dev/redirect?r=obtainium%3A%2F%2Fapp%2F%257B%2522id%2522%253A%2522io.github.l41n_pr0t0.artcrafthub%2522%252C%2522url%2522%253A%2522https%253A%252F%252Fgithub.com%252Fl41n-pr0t0%252FArtCraftHub-android%2522%252C%2522author%2522%253A%2522l41n-pr0t0%2522%252C%2522name%2522%253A%2522ArtCraft%2520Hub%2522%252C%2522additionalSettings%2522%253A%2522%257B%255C%2522includePrereleases%255C%2522%253Atrue%252C%255C%2522fallbackToOlderReleases%255C%2522%253Atrue%257D%2522%257D)
+[<img src="https://github.com/ImranR98/Obtainium/blob/main/assets/graphics/badge_obtainium.png?raw=true" alt="Get it on Obtainium" height="54">](https://apps.obtainium.imranr.dev/redirect?r=obtainium%3A%2F%2Fapp%2F%257B%2522id%2522%253A%2522io.github.l41n_pr0t0.artcrafthub%2522%252C%2522url%2522%253A%2522https%253A%252F%252Fgithub.com%252Fl41n-pr0t0%252FArtCraftHub-android%2522%252C%2522author%2522%253A%2522l41n-pr0t0%2522%252C%2522name%2522%253A%2522ArtCraft%2520Hub%2522%252C%2522additionalSettings%2522%253A%2522%257B%255C%2522includePrereleases%255C%2522%253Afalse%252C%255C%2522fallbackToOlderReleases%255C%2522%253Atrue%257D%2522%257D)
 
 <p>
   <img src="docs/screenshots/1-catalogue.png" width="19%" alt="Catalogue: every app on a ring around the installed count">
@@ -43,8 +43,8 @@ Android's installer. It doesn't run its own servers and doesn't collect any data
 3. In the hub, tap **Install** on an app. The first time, Android asks you to allow the hub to
    install apps. Every install and uninstall is confirmed by Android's own dialog.
 
-Or add the hub to Obtainium with the badge above: it finds the newest release and picks the APK
-for your phone. To track an ArtCraft app in Obtainium by hand, turn on **Include prereleases**:
+Or add the hub to Obtainium with the badge above: it follows the hub's stable releases and picks
+the APK for your phone. To track an ArtCraft app in Obtainium by hand, turn on **Include prereleases**:
 the ArtCraft apps only publish pre-releases so far, and without it Obtainium says "Could not find
 a suitable release".
 
