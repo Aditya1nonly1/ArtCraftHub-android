@@ -52,6 +52,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
@@ -174,13 +176,18 @@ private fun HubRing(
             ringApps.forEachIndexed { i, app ->
                 val angle = -PI / 2 + i * 2 * PI / n
                 val hasUpdate = app.state is AppState.UpdateAvailable
+                val description = if (hasUpdate) "${app.entry.name}, update available" else app.entry.name
                 Box(
                     Modifier
                         .offset(orbit * cos(angle).toFloat(), orbit * sin(angle).toFloat())
                         .size(disc),
                 ) {
                     Box(
-                        Modifier.fillMaxSize().glass(CircleShape).clickable { onSelect(app.entry.id) },
+                        Modifier
+                            .fillMaxSize()
+                            .glass(CircleShape)
+                            .clickable(onClickLabel = "Open details") { onSelect(app.entry.id) }
+                            .semantics { contentDescription = description },
                         contentAlignment = Alignment.Center,
                     ) {
                         AppIcon(app, packageName(app), icons, size = disc * 0.64f, shape = CircleShape)

@@ -73,29 +73,76 @@ abstract class CargoNdkBuild : DefaultTask() {
 
     @TaskAction
     fun build() {
+        val cargoPath = cargo.get()
+        val cargoFile = File(cargoPath)
+        val cargoHome = System.getenv("CARGO_HOME")?.takeIf { it.isNotBlank() } ?: File(System.getProperty("user.home"), ".cargo").absolutePath
+        val cargoBinDir = if (cargoFile.isAbsolute) cargoFile.parentFile else File(cargoHome, "bin")
+        val currentPath = System.getenv("PATH") ?: ""
+        val pathEnv = if (cargoBinDir != null && cargoBinDir.isDirectory && !currentPath.split(File.pathSeparator).contains(cargoBinDir.absolutePath)) {
+            "${cargoBinDir.absolutePath}${File.pathSeparator}$currentPath"
+        } else {
+            currentPath
+        }
+
+        val isCargoAvailable = if (cargoFile.isAbsolute) cargoFile.exists() else checkExecutableInPath(cargoPath, pathEnv)
+        if (!isCargoAvailable) {
+            throw GradleException(
+                "Rust executable '$cargoPath' was not found on your system.\n" +
+                "This project requires Rust and cargo-ndk to build the native library (libhub_core.so).\n\n" +
+                "To resolve this issue:\n" +
+                "1. Install Rust via rustup: https://rustup.rs/\n" +
+                "2. Install cargo-ndk: cargo install cargo-ndk\n" +
+                "3. Add Android Rust targets: rustup target add aarch64-linux-android x86_64-linux-android\n" +
+                "4. Ensure cargo is added to your PATH, or set CARGO environment variable to the path of cargo.exe"
+            )
+        }
+
+        val cargoNdkExe = if (System.getProperty("os.name").lowercase().startsWith("windows")) "cargo-ndk.exe" else "cargo-ndk"
+        val isCargoNdkAvailable = if (cargoFile.isAbsolute) {
+            cargoFile.resolveSibling(cargoNdkExe).exists() || checkExecutableInPath(cargoNdkExe, pathEnv)
+        } else {
+            checkExecutableInPath(cargoNdkExe, pathEnv)
+        }
+        if (!isCargoNdkAvailable) {
+            throw GradleException(
+                "Cargo subcommand 'cargo-ndk' was not found on your system.\n" +
+                "This project requires cargo-ndk to build the native library (libhub_core.so).\n\n" +
+                "To resolve this issue:\n" +
+                "1. Install cargo-ndk: cargo install cargo-ndk\n" +
+                "2. Add Android Rust targets: rustup target add aarch64-linux-android x86_64-linux-android"
+            )
+        }
+
         val targets = abis.get().flatMap { listOf("-t", it) }
         val out = outputDir.get().asFile.absolutePath
         // the library mustn't hold the paths it was built in (panic locations name source files);
         // the standard library's source goes under the name rustc gives it without the rust-src
         // component (/rustc/<commit>/), as with it installed rustc names the local copy instead
-        val cargoHome = System.getenv("CARGO_HOME")?.takeIf { it.isNotBlank() } ?: File(System.getProperty("user.home"), ".cargo").absolutePath
-        val commit = rustc("-vV").lineSequence().first { it.startsWith("commit-hash:") }.substringAfter(':').trim()
-        val stdSource = File(rustc("--print", "sysroot"), "lib/rustlib/src/rust").absolutePath
+        val commit = rustc(pathEnv, "-vV").lineSequence().first { it.startsWith("commit-hash:") }.substringAfter(':').trim()
+        val stdSource = File(rustc(pathEnv, "--print", "sysroot"), "lib/rustlib/src/rust").absolutePath
         val remap = listOf(
             "--remap-path-prefix=${File(workspaceDir.get()).absolutePath}=/artcrafthub",
             "--remap-path-prefix=$cargoHome=/cargo",
             "--remap-path-prefix=$stdSource=/rustc/$commit/",
         )
-        execOperations.exec {
-            workingDir(workspaceDir.get())
-            environment("ANDROID_NDK_HOME", ndkDir.get())
-            environment("CARGO_ENCODED_RUSTFLAGS", remap.joinToString("\u001f"))
-            // never incremental: it splits the code differently, and the library would differ from a release's
-            environment("CARGO_INCREMENTAL", "0")
-            // from Cargo.lock as it is: a build of the same commit elsewhere (F-Droid's) comes out the same
-            commandLine(
-                listOf(cargo.get(), "ndk") + targets +
-                    listOf("--platform", apiLevel.get().toString(), "-o", out, "build", "--release", "--locked", "-p", "hub-core", "--lib"),
+        try {
+            execOperations.exec {
+                workingDir(workspaceDir.get())
+                environment("PATH", pathEnv)
+                environment("ANDROID_NDK_HOME", ndkDir.get())
+                environment("CARGO_ENCODED_RUSTFLAGS", remap.joinToString("\u001f"))
+                // never incremental: it splits the code differently, and the library would differ from a release's
+                environment("CARGO_INCREMENTAL", "0")
+                // from Cargo.lock as it is: a build of the same commit elsewhere (F-Droid's) comes out the same
+                commandLine(
+                    listOf(cargo.get(), "ndk") + targets +
+                        listOf("--platform", apiLevel.get().toString(), "-o", out, "build", "--release", "--locked", "-p", "hub-core", "--lib"),
+                )
+            }
+        } catch (e: Exception) {
+            throw GradleException(
+                "Failed to execute 'cargo ndk'. Ensure cargo-ndk is installed ('cargo install cargo-ndk') " +
+                "and Android targets are added ('rustup target add aarch64-linux-android x86_64-linux-android').", e
             )
         }
         // only the app's library ships (cargo-ndk copies any other shared library cargo left)
@@ -103,16 +150,38 @@ abstract class CargoNdkBuild : DefaultTask() {
     }
 
     /** What `rustc` prints for `args`, run where cargo runs it (the same toolchain). */
-    private fun rustc(vararg args: String): String {
+    private fun rustc(pathEnv: String, vararg args: String): String {
         val cargoFile = File(cargo.get())
         val rustc = if (cargoFile.isAbsolute) cargoFile.resolveSibling(cargoFile.name.replace("cargo", "rustc")).path else "rustc"
         val printed = ByteArrayOutputStream()
-        execOperations.exec {
-            workingDir(workspaceDir.get())
-            commandLine(listOf(rustc) + args)
-            standardOutput = printed
+        try {
+            execOperations.exec {
+                workingDir(workspaceDir.get())
+                environment("PATH", pathEnv)
+                commandLine(listOf(rustc) + args)
+                standardOutput = printed
+            }
+        } catch (e: Exception) {
+            throw GradleException(
+                "Failed to execute '$rustc'. Make sure Rust is installed (https://rustup.rs/) and available in system PATH.", e
+            )
         }
         return printed.toString().trim()
+    }
+
+    private fun checkExecutableInPath(executable: String, pathEnv: String = System.getenv("PATH") ?: ""): Boolean {
+        if (pathEnv.isEmpty()) return false
+        val pathSeparator = File.pathSeparator
+        val extensions = if (System.getProperty("os.name").lowercase().startsWith("windows")) {
+            listOf("", ".exe", ".cmd", ".bat")
+        } else {
+            listOf("")
+        }
+        return pathEnv.split(pathSeparator).any { dir ->
+            extensions.any { ext ->
+                File(dir, executable + ext).isFile
+            }
+        }
     }
 }
 
@@ -142,7 +211,7 @@ abstract class UniffiBindgen : DefaultTask() {
 android {
     namespace = "io.github.l41n_pr0t0.artcrafthub"
     compileSdk = 37
-    ndkVersion = "27.2.12479018"
+    ndkVersion = "28.2.13676358"
 
     defaultConfig {
         applicationId = "io.github.l41n_pr0t0.artcrafthub"
@@ -192,12 +261,37 @@ android {
 androidComponents {
     onVariants { variant ->
         val name = variant.name.replaceFirstChar { it.uppercase() }
+        val resolvedNdkDir: Provider<String> = providers.provider {
+            val envNdk = providers.environmentVariable("ANDROID_NDK_HOME").orNull
+            if (!envNdk.isNullOrBlank() && File(envNdk).isDirectory) {
+                return@provider envNdk
+            }
+            try {
+                val agpNdk = androidComponents.sdkComponents.ndkDirectory.orNull?.asFile?.absolutePath
+                if (!agpNdk.isNullOrBlank() && File(agpNdk).isDirectory) {
+                    return@provider agpNdk
+                }
+            } catch (_: Exception) {}
+
+            val sdkDir = providers.environmentVariable("ANDROID_HOME").orNull
+                ?: providers.environmentVariable("ANDROID_SDK_ROOT").orNull
+                ?: File(System.getProperty("user.home"), "AppData/Local/Android/Sdk").absolutePath
+            val ndkParent = File(sdkDir, "ndk")
+            if (ndkParent.isDirectory) {
+                val installedNdk = ndkParent.listFiles()?.filter { it.isDirectory }?.maxByOrNull { it.name }
+                if (installedNdk != null) {
+                    return@provider installedNdk.absolutePath
+                }
+            }
+            ""
+        }
+
         val cargoBuild = tasks.register<CargoNdkBuild>("cargoBuild$name") {
             group = "rust"
             description = "Builds libhub_core.so for $rustAbis"
             cargo.set(cargoExecutable)
             workspaceDir.set(cargoWorkspaceDir.absolutePath)
-            ndkDir.set(androidComponents.sdkComponents.ndkDirectory.map { it.asFile.absolutePath })
+            ndkDir.set(resolvedNdkDir)
             abis.set(rustAbis)
             apiLevel.set(minApi)
             // cargo knows what changed
